@@ -49,7 +49,7 @@ if (!isblogo) {
                 if (size.width > maxWidth) {
                     maxWidth = size.width;
                 }
-                y -= (size.height - 2);
+                y -= (size.height);
             }
             x += maxWidth;
         }
@@ -156,9 +156,11 @@ if (!isblogo) {
     // ****** SVG-based Implementation
     // **********************************************************************
     function makeScaleAttribute(x, y, scalex, scaley) {
-        var result = 'translate(' + x + ' ' + y + ')';
-        result += ' scale(' + scalex + ' ' + scaley + ')';
-        result += ' translate(-' + x + ' -' + y + ')';
+         var  result = 'scale('+scalex+', ' + scaley.toFixed(3)+')';
+         result += ' translate(' +(-1*x*(scalex-1)/scalex).toFixed(2) +', ' + (-1*y*(scaley-1)/scaley).toFixed(4) +')';
+        // 'translate(' + x + ' ' + y + ')';
+        // result += ' scale(' + scalex + ' ' + scaley + ')';
+        // result += ' translate(-' + x + ' -' + y + ')';
         return result;
     }
 
@@ -169,11 +171,12 @@ if (!isblogo) {
         text.setAttributeNS(null, "fill", GLYPH_COLORS[glyph]);
         text.setAttributeNS(null, "style", style);
         text.setAttributeNS(null, "transform", makeScaleAttribute(x, y, scalex, scaley));
-        text.appendChild(document.createTextNode(glyph));
-        svg.appendChild(text);
+        var g = document.createTextNode(glyph);
+        text.appendChild(g);
+        var node = svg.appendChild(text);
         // use bounding client rect so we get the real dimensions including the
         // transform
-        bbox = text.getBoundingClientRect();
+        bbox = text.getExtentOfChar(0);
         return { width: bbox.width, height: bbox.height, elem: text };
     }
 
